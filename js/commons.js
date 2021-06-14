@@ -2,7 +2,7 @@
  * Contains commons functions used to render the lab.
  */
 
-const TESTS_VALUES_LENGTH = [10, 100, 1000, 10000];
+const TESTS_VALUES_LENGTH = [10, 100, 1000, 10000, 100000, 1000000];
 
 async function executeTest(testCaseId) {
     let results = new Map();
@@ -19,6 +19,11 @@ async function executeTest(testCaseId) {
                 input = "X".repeat(v);
                 output = await performSha512Hash(input);
                 break;
+            case 3:
+                input = "X".repeat(v);
+                cryptoKey = await performSymmetricKeyGenerationForEncryptionDecryptionUsageWithAESGCM();
+                output = await performEncryptionDecryptionWithAESGCM(input, cryptoKey);
+                break;
             default:
                 output = "Unsupported!";
         }
@@ -26,7 +31,7 @@ async function executeTest(testCaseId) {
         results.set(v, {
             "Output": output,
             "Input": input,
-            "ProcessingDelayInMS": (end - start).toFixed(4)
+            "ProcessingDelayInMS": (output === "LENGTH_UNSUPPORTED") ? -1 : (end - start).toFixed(4) //Value -1 means unsupported test case
         });
     }
     console.debug("TEST CASE RESULTS:")
@@ -43,7 +48,7 @@ function renderTestResults(testCaseId) {
         let data = {
             labels: TESTS_VALUES_LENGTH,
             datasets: [{
-                label: "Processing delay",
+                label: "Processing delay in ms (value -1 means unsupported test case)",
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 0.2)',
                 data: chartValues
