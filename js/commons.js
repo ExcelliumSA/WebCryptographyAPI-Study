@@ -60,6 +60,11 @@ async function executeTest(testCaseId) {
                 output = await performSignVerifyWithECDSA(input, cryptoKeyPair.publicKey, cryptoKeyPair.privateKey);
                 break;
             }
+            case 8: {
+                input = "X".repeat(v);
+                output = await performKeyDerivationFromPassword(v, input);
+                break;
+            }            
             default:
                 output = "UnsupportedTestCase";
         }

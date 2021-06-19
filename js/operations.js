@@ -186,3 +186,36 @@ async function performSignVerifyWithECDSA(sourceData, cryptoKeyPairPublicKey, cr
     }
     return result;
 }
+
+async function performKeyDerivationFromPassword(iterationCount, basePassword) {
+    let saltData = new Int32Array(16);
+    CRYPTO_OBJ.getRandomValues(saltData);
+    //PBKDF2 algorithm will be used
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey#supported_algorithms
+    //See https://developer.mozilla.org/en-US/docs/Web/API/Pbkdf2Params
+    //See https://cryptosense.com/blog/parameter-choice-for-pbkdf2
+    let pbkdf2Params = {
+        name: "PBKDF2",
+        hash: "SHA-512",
+        salt: saltData,
+        iterations: iterationCount
+    }
+    //Use the importKey() function to import the initial password as CryptoKey
+    //Flag it as not exportable and for Key/Bits derivation usages in order it can only be used
+    //to obtain a derivated CryptoKey
+    let dataEncoded = TEXT_ENCODER.encode(basePassword);
+    let baseCryptoKeyUsages = ["deriveBits", "deriveKey"];
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey
+    let baseCryptoKey = await CRYPTO_OBJ.subtle.importKey("raw", dataEncoded, "PBKDF2", false, baseCryptoKeyUsages);
+    //Obtain a derivated key
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/wrapKey#aes-kw
+    let aesKeyGenParams = {
+        name: "AES-KW",
+        length: 256
+    }
+    let derivatedCryptoKeyUsages = ["wrapKey", "unwrapKey"];
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey
+    let derivatedCryptoKey = await CRYPTO_OBJ.subtle.deriveKey(pbkdf2Params, baseCryptoKey, aesKeyGenParams, true, derivatedCryptoKeyUsages);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey
+    return derivatedCryptoKey;
+}
