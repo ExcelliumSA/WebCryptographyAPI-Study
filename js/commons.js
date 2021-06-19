@@ -3,6 +3,7 @@
  */
 
 const TESTS_VALUES_LENGTH = [10, 100, 1000, 10000, 100000, 1000000];
+var CHART_OBJECT = null;
 
 async function executeTest(testCaseId) {
     let results = new Map();
@@ -64,15 +65,16 @@ async function executeTest(testCaseId) {
                 input = "X".repeat(v);
                 output = await performKeyDerivationFromPassword(v, input);
                 break;
-            }            
+            }
             default:
                 output = "UnsupportedTestCase";
         }
         end = performance.now();
+        let processingDelay = (end - start).toFixed(4);
         results.set(v, {
             "Output": output,
             "Input": input,
-            "ProcessingDelayInMS": (output === "LENGTH_UNSUPPORTED") ? -1 : (end - start).toFixed(4) //Value -1 means unsupported test case
+            "ProcessingDelayInMS": (output === "LENGTH_UNSUPPORTED") ? -1 : processingDelay //Value -1 means unsupported test case
         });
     }
     console.info("TEST CASE RESULTS:")
@@ -80,7 +82,18 @@ async function executeTest(testCaseId) {
     return results;
 }
 
-function renderTestResults(testCaseId) {
+function renderTestResults() {
+    //Get wanted test case
+    let testCaseId = parseInt(document.getElementById("selectLab").value, 10);
+    if (testCaseId == -1) {
+        return;
+    }
+    //Adapt UI
+    document.getElementById("divLoading").style.visibility = "visible";
+    if (CHART_OBJECT != null) {
+        CHART_OBJECT.destroy();
+    }
+    //Execute the test case asynchronously
     executeTest(testCaseId).then(resultsMap => {
         let chartValues = [];
         resultsMap.forEach(function (value, key) {
@@ -115,8 +128,13 @@ function renderTestResults(testCaseId) {
                 }
             }
         };
-        new Chart(
+        CHART_OBJECT = new Chart(
             document.getElementById("renderingTestResultsZone"), config
         );
+        document.getElementById("divLoading").style.visibility = "hidden";
     }).catch(err => alert("ERROR: " + err));
+}
+
+function renderInit() {
+    document.getElementById("divLoading").style.visibility = "hidden";
 }
