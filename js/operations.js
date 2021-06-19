@@ -104,7 +104,7 @@ async function performAsymmetricKeyGenerationForEncryptionDecryptionUsageWithRSA
     //See https://developer.mozilla.org/en-US/docs/Web/API/RsaHashedKeyGenParams
     //See https://www.keylength.com/en/3/
     //See https://developer.mozilla.org/en-US/docs/Web/API/RsaHashedKeyGenParams#properties
-    let rsaHashedKeyGenParams  = {
+    let rsaHashedKeyGenParams = {
         name: "RSA-OAEP",
         modulusLength: 4096,
         publicExponent: new Uint8Array([1, 0, 1]),
@@ -135,4 +135,22 @@ async function performEncryptionDecryptionWithRSAOAEP(sourceData, cryptoKeyPairP
         cycleSucceed: (sourceData === plainText)
     }
     return result;
+}
+
+function performIdentificationOfContentLengthLimitForEncryptionWithRSAOAEP(cryptoKeyPairPublicKey) {
+    let labelData = new Int32Array(32);
+    CRYPTO_OBJ.getRandomValues(labelData);  
+    let rsaOaepParams = {
+        name: "RSA-OAEP",
+        label: labelData
+    };  
+    let dataEncoded = null;  
+    for (let i = 100; i < 1000000; i++) {
+        console.debug("Test with value of length " + i + "...");
+        dataEncoded = TEXT_ENCODER.encode("T".repeat(i));
+        CRYPTO_OBJ.subtle.encrypt(rsaOaepParams, cryptoKeyPairPublicKey, dataEncoded).catch(err => {
+            console.warn(err);
+            return i;
+        });
+    }
 }

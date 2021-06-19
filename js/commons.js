@@ -46,7 +46,14 @@ async function executeTest(testCaseId) {
                     console.warn("TEST CASE " + v + " FAILED: " + error);
                 } 
                 break;
-            }            
+            } 
+            case 6: {
+                //WARNING THIS TEST CASE WILL MDADE BROWSER UNSTABLE!!!!!!
+                cryptoKeyPair = await performAsymmetricKeyGenerationForEncryptionDecryptionUsageWithRSAOAEP();
+                output = performIdentificationOfContentLengthLimitForEncryptionWithRSAOAEP(cryptoKeyPair.publicKey);
+                input = "X".repeat(output);
+                break;
+            }                        
             default:
                 output = "UnsupportedTestCase";
         }
