@@ -33,8 +33,22 @@ async function executeTest(testCaseId) {
                 output = await performSignVerifyWithHMAC(input, cryptoKey);
                 break;
             }
+            case 5: {
+                input = "X".repeat(v);
+                cryptoKeyPair = await performAsymmetricKeyGenerationForEncryptionDecryptionUsageWithRSAOAEP();
+                //For the test case above "100", the browser raise an operation specific error so we trap it.
+                //This error is consitent because the amount of data is big for a asymmetric encryption operation.
+                //Asymmetric encryption is targeted for a small data like the protection of a symmetric key during the exchange for later symmetric encryption operation.
+                try {
+                    output = await performEncryptionDecryptionWithRSAOAEP(input, cryptoKeyPair.publicKey, cryptoKeyPair.privateKey);                   
+                } catch (error) {
+                    output = "LENGTH_UNSUPPORTED";
+                    console.warn("TEST CASE " + v + " FAILED: " + error);
+                } 
+                break;
+            }            
             default:
-                output = "Unsupported!";
+                output = "UnsupportedTestCase";
         }
         end = performance.now();
         results.set(v, {

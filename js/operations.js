@@ -96,3 +96,43 @@ async function performSignVerifyWithHMAC(sourceData, cryptoKey) {
     }
     return result;
 }
+
+async function performAsymmetricKeyGenerationForEncryptionDecryptionUsageWithRSAOAEP() {
+    //RSA was chosen because EC was not supported by the "algorithm" parameter at the time of the POC (June 2021):
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt#parameters
+    //Generate a RSA-OAEP key pair with a size of 4096 bits
+    //See https://developer.mozilla.org/en-US/docs/Web/API/RsaHashedKeyGenParams
+    //See https://www.keylength.com/en/3/
+    //See https://developer.mozilla.org/en-US/docs/Web/API/RsaHashedKeyGenParams#properties
+    let rsaHashedKeyGenParams  = {
+        name: "RSA-OAEP",
+        modulusLength: 4096,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: "SHA-512"
+    };
+    let keyUsages = ["encrypt", "decrypt"];
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/generateKey
+    let cryptoKeyPair = await CRYPTO_OBJ.subtle.generateKey(rsaHashedKeyGenParams, true, keyUsages);
+    return cryptoKeyPair;
+}
+
+async function performEncryptionDecryptionWithRSAOAEP(sourceData, cryptoKeyPairPublicKey, cryptoKeyPairPrivateKey) {
+    let labelData = new Int32Array(32); //256 bits
+    CRYPTO_OBJ.getRandomValues(labelData);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/RsaOaepParams    
+    let rsaOaepParams = {
+        name: "RSA-OAEP",
+        label: labelData
+    };
+    let dataEncoded = TEXT_ENCODER.encode(sourceData);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt
+    let encryptedData = await CRYPTO_OBJ.subtle.encrypt(rsaOaepParams, cryptoKeyPairPublicKey, dataEncoded)
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/decrypt
+    let decryptedData = await CRYPTO_OBJ.subtle.decrypt(rsaOaepParams, cryptoKeyPairPrivateKey, encryptedData)
+    let plainText = TEXT_DECODER.decode(decryptedData);
+    let result = {
+        encryptedData: toHex(encryptedData),
+        cycleSucceed: (sourceData === plainText)
+    }
+    return result;
+}
