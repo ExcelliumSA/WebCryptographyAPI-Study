@@ -63,9 +63,36 @@ async function performEncryptionDecryptionWithAESGCM(sourceData, cryptoKey) {
     //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/decrypt
     let decryptedData = await CRYPTO_OBJ.subtle.decrypt(aesGcmParams, cryptoKey, encryptedData)
     let plainText = TEXT_DECODER.decode(decryptedData);
-    result = {
+    let result = {
         encryptedData: toHex(encryptedData),
         cycleSucceed: (sourceData === plainText)
+    }
+    return result;
+}
+
+async function performSecretGenerationForSignVerifyUsageWithHMAC() {
+    //Generate a secret (cryptoKey) for HMAC operation with SHA-512
+    //See https://developer.mozilla.org/en-US/docs/Web/API/HmacKeyGenParams
+    let hmacKeyGenParams = {
+        name: "HMAC",
+        hash: "SHA-512"
+    };
+    let keyUsages = ["sign", "verify"];
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/generateKey
+    let cryptoKey = await CRYPTO_OBJ.subtle.generateKey(hmacKeyGenParams, true, keyUsages);
+    return cryptoKey;
+}
+
+async function performSignVerifyWithHMAC(sourceData, cryptoKey) {
+    let algorithm = "HMAC";
+    let dataEncoded = TEXT_ENCODER.encode(sourceData);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign
+    let signature = await CRYPTO_OBJ.subtle.sign(algorithm, cryptoKey, dataEncoded);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/verify
+    let isValid = await CRYPTO_OBJ.subtle.verify(algorithm, cryptoKey, signature, dataEncoded);
+    let result = {
+        signature: toHex(signature),
+        cycleSucceed: isValid
     }
     return result;
 }

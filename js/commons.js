@@ -11,19 +11,28 @@ async function executeTest(testCaseId) {
     for (const v of TESTS_VALUES_LENGTH) {
         start = performance.now();
         switch (testCaseId) {
-            case 1:
+            case 1: {
                 input = v;
                 output = performRandomValuesGeneration(input);
                 break;
-            case 2:
+            }
+            case 2: {
                 input = "X".repeat(v);
                 output = await performSha512Hash(input);
                 break;
-            case 3:
+            }
+            case 3: {
                 input = "X".repeat(v);
                 cryptoKey = await performSymmetricKeyGenerationForEncryptionDecryptionUsageWithAESGCM();
                 output = await performEncryptionDecryptionWithAESGCM(input, cryptoKey);
                 break;
+            }
+            case 4: {
+                input = "X".repeat(v);
+                cryptoKey = await performSecretGenerationForSignVerifyUsageWithHMAC();
+                output = await performSignVerifyWithHMAC(input, cryptoKey);
+                break;
+            }
             default:
                 output = "Unsupported!";
         }
@@ -34,8 +43,8 @@ async function executeTest(testCaseId) {
             "ProcessingDelayInMS": (output === "LENGTH_UNSUPPORTED") ? -1 : (end - start).toFixed(4) //Value -1 means unsupported test case
         });
     }
-    console.debug("TEST CASE RESULTS:")
-    console.debug(results);
+    console.info("TEST CASE RESULTS:")
+    console.info(results);
     return results;
 }
 
