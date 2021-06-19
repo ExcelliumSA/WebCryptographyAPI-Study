@@ -139,12 +139,12 @@ async function performEncryptionDecryptionWithRSAOAEP(sourceData, cryptoKeyPairP
 
 function performIdentificationOfContentLengthLimitForEncryptionWithRSAOAEP(cryptoKeyPairPublicKey) {
     let labelData = new Int32Array(32);
-    CRYPTO_OBJ.getRandomValues(labelData);  
+    CRYPTO_OBJ.getRandomValues(labelData);
     let rsaOaepParams = {
         name: "RSA-OAEP",
         label: labelData
-    };  
-    let dataEncoded = null;  
+    };
+    let dataEncoded = null;
     for (let i = 100; i < 1000000; i++) {
         console.debug("Test with value of length " + i + "...");
         dataEncoded = TEXT_ENCODER.encode("T".repeat(i));
@@ -153,4 +153,36 @@ function performIdentificationOfContentLengthLimitForEncryptionWithRSAOAEP(crypt
             return i;
         });
     }
+}
+
+async function performAsymmetricKeyGenerationForSignVerifyUsageWithECDSA() {
+    //Generate a ECDSA key pair with the P-521 elliptic curve
+    //See https://developer.mozilla.org/en-US/docs/Web/API/EcKeyGenParams
+    let ecKeyGenParams = {
+        name: "ECDSA",
+        namedCurve: "P-521"
+    };
+    let keyUsages = ["sign", "verify"];
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/generateKey
+    let cryptoKeyPair = await CRYPTO_OBJ.subtle.generateKey(ecKeyGenParams, true, keyUsages);
+    return cryptoKeyPair;
+}
+
+async function performSignVerifyWithECDSA(sourceData, cryptoKeyPairPublicKey, cryptoKeyPairPrivateKey) {
+    //Generate a ECDSA with SHA-512 signature and verify it
+    //See https://developer.mozilla.org/en-US/docs/Web/API/EcdsaParams
+    let ecdsaParams = {
+        name: "ECDSA",
+        hash: "SHA-512"
+    };
+    let dataEncoded = TEXT_ENCODER.encode(sourceData);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign
+    let signature = await CRYPTO_OBJ.subtle.sign(ecdsaParams, cryptoKeyPairPrivateKey, dataEncoded);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/verify
+    let isValid = await CRYPTO_OBJ.subtle.verify(ecdsaParams, cryptoKeyPairPublicKey, signature, dataEncoded);
+    let result = {
+        signature: toHex(signature),
+        cycleSucceed: isValid
+    }
+    return result;
 }

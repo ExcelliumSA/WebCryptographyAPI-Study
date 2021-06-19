@@ -6,7 +6,7 @@ const TESTS_VALUES_LENGTH = [10, 100, 1000, 10000, 100000, 1000000];
 
 async function executeTest(testCaseId) {
     let results = new Map();
-    let input, output = null;
+    let input, output, cryptoKey, cryptoKeyPair = null;
     let start, end = 0;
     for (const v of TESTS_VALUES_LENGTH) {
         start = performance.now();
@@ -40,20 +40,26 @@ async function executeTest(testCaseId) {
                 //This error is consitent because the amount of data is big for a asymmetric encryption operation.
                 //Asymmetric encryption is targeted for a small data like the protection of a symmetric key during the exchange for later symmetric encryption operation.
                 try {
-                    output = await performEncryptionDecryptionWithRSAOAEP(input, cryptoKeyPair.publicKey, cryptoKeyPair.privateKey);                   
+                    output = await performEncryptionDecryptionWithRSAOAEP(input, cryptoKeyPair.publicKey, cryptoKeyPair.privateKey);
                 } catch (error) {
                     output = "LENGTH_UNSUPPORTED";
                     console.warn("TEST CASE " + v + " FAILED: " + error);
-                } 
+                }
                 break;
-            } 
+            }
             case 6: {
                 //WARNING THIS TEST CASE WILL MDADE BROWSER UNSTABLE!!!!!!
                 cryptoKeyPair = await performAsymmetricKeyGenerationForEncryptionDecryptionUsageWithRSAOAEP();
                 output = performIdentificationOfContentLengthLimitForEncryptionWithRSAOAEP(cryptoKeyPair.publicKey);
                 input = "X".repeat(output);
                 break;
-            }                        
+            }
+            case 7: {
+                input = "X".repeat(v);
+                cryptoKeyPair = await performAsymmetricKeyGenerationForSignVerifyUsageWithECDSA();
+                output = await performSignVerifyWithECDSA(input, cryptoKeyPair.publicKey, cryptoKeyPair.privateKey);
+                break;
+            }
             default:
                 output = "UnsupportedTestCase";
         }
