@@ -40,6 +40,15 @@
                 <option value="8">Key derivation based on a password (PBKDF2)</option>
             </select>
         </div>
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-warning" onclick="exportKey('INSECURE')">Export key using <strong>exportKey</strong>
+                (AES key)</button>
+            <button type="button" class="btn btn-success" onclick="exportKey('SECURE')">Export key using <strong>wrapKey</strong> (AES
+                key)</button>
+                <button type="button" class="btn btn-danger" onclick="exportKey('NON-EXTRACTABLE')">Export key marked as <strong>non-extractable</strong> (AES
+                    key)</button>                
+            <a class="nav-link" target="_blank" href="https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'PUT_KEY_HERE'%7D,%7B'option':'UTF8','string':''%7D,'ECB','Raw','Hex',%7B'option':'Hex','string':''%7D)AES_Decrypt(%7B'option':'Hex','string':'PUT_KEY_HERE'%7D,%7B'option':'UTF8','string':''%7D,'ECB','Hex','Raw',%7B'option':'Hex','string':''%7D,%7B'option':'Hex','string':''%7D)&input=VEVTVA">Open CyberChef AES recipe</a>
+        </div>
         <div class="d-flex align-items-center" id="divLoading">
             <strong>Processing pending, open the Javascript console to see the processing trace ...</strong>
             <div class="spinner-border ms-auto text-primary" role="status" aria-hidden="false"></div>

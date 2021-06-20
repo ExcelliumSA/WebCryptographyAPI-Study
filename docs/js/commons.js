@@ -135,6 +135,32 @@ function renderTestResults() {
     }).catch(err => alert("ERROR: " + err));
 }
 
+function exportKey(mode) {
+    switch (mode) {
+        case "INSECURE": {
+            performKeyExportUsingUnprotectedWay().then(key => {
+                alert("Unprotected key encoded in HEX, use the CyberChef link to test it: " + key);
+            }).catch(err => alert("ERROR: " + err));
+            break;
+        }
+        case "SECURE": {
+            let basePassword = prompt("Please enter the password to use to derivate a protection key", "AppSec@Excellium");
+            performKeyExportUsingProtectedWay(basePassword).then(key => {
+                alert("Protected key encoded in HEX, use the CyberChef link to test it: " + key);
+            }).catch(err => alert("ERROR: " + err));
+            break;
+        }
+        case "NON-EXTRACTABLE": {
+            performKeyExportMarkedAsNonExtractable().then(key => {
+                alert("Unprotected key encoded in HEX, use the CyberChef link to test it: " + key);
+            }).catch(err => alert("ERROR: " + err));
+            break;
+        }
+        default:
+            alert("Unsupported mode!");
+    }
+}
+
 function renderInit() {
     document.getElementById("divLoading").style.visibility = "hidden";
 }

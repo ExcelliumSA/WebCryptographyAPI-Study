@@ -219,3 +219,37 @@ async function performKeyDerivationFromPassword(iterationCount, basePassword) {
     //See https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey
     return derivatedCryptoKey;
 }
+
+async function performKeyExportUsingUnprotectedWay() {
+    let cryptoKey = await performSymmetricKeyGenerationForEncryptionDecryptionUsageWithAESGCM();
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/exportKey
+    let exportedKeyContent = await CRYPTO_OBJ.subtle.exportKey("raw", cryptoKey);
+    return toHex(exportedKeyContent);
+}
+
+async function performKeyExportUsingProtectedWay(basePassword) {
+    let cryptoKeyToExport = await performSymmetricKeyGenerationForEncryptionDecryptionUsageWithAESGCM();
+    let cryptoKeyForProtection = await performKeyDerivationFromPassword(10000, basePassword);
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/wrapKey#supported_algorithms
+    let wrapAlgo = {
+        name: "AES-KW"
+    }
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/wrapKey
+    let exportedKeyContent = await CRYPTO_OBJ.subtle.wrapKey("raw", cryptoKeyToExport, cryptoKeyForProtection, wrapAlgo);
+    return toHex(exportedKeyContent);
+}
+
+async function performKeyExportMarkedAsNonExtractable() {
+    //Generate a non extractable key
+    let extractable = false;
+    let aesKeyGenParams = {
+        name: "AES-GCM",
+        length: 256
+    };
+    let keyUsages = ["encrypt", "decrypt"];
+    //See https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/generateKey#parameters
+    let cryptoKey = await CRYPTO_OBJ.subtle.generateKey(aesKeyGenParams, extractable, keyUsages);
+    //Try to export it
+    let exportedKeyContent = await CRYPTO_OBJ.subtle.exportKey("raw", cryptoKey);
+    return toHex(exportedKeyContent);
+}
