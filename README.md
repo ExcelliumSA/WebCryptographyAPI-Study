@@ -20,7 +20,7 @@ See file [study-note.pdf](study-note.pdf) to access to the full study note gathe
 
 ## Public instance
 
-The lab is automatically deployed via the [Github page feature](https://pages.github.com/) at each commit on the `main` branch on
+The lab is automatically deployed via the [Github page feature](https://pages.github.com/), on every commit on the `main` branch, on the following URL:
 
 https://excelliumsa.github.io/WebCryptographyAPI-Study/
 
