@@ -16,6 +16,8 @@ See file [study-note.pdf](study-note.pdf) to access to the full study note gathe
 
 # Lab
 
+> :information_source: All files related to the demo web app are stored in the **docs** folder.
+
 ## Public instance
 
 The lab is automatically deployed via the [Github page feature](https://pages.github.com/) at each commit on the `main` branch on
