@@ -24,9 +24,9 @@ Available on:
 Hit CTRL-C to stop the server
 ```
 
-Or use the launch configuration named `StartWebServerWithHTTPS` in the Visual Studio Code workspace provided. 
+Or use the launch configuration named `StartWebServerWithHTTPS` in the Visual Studio Code workspace provided.
 
-2. Open the url `https://127.0.0.1:8443` in your browser accept the certificate warning because **it is a self signed one**.
+2. Open the url `https://127.0.0.1:8443/docs` in your browser accept the certificate warning because **it is a self signed one**.
 
 # Lab description
 

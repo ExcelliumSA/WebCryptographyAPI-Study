@@ -24,10 +24,13 @@
 
 <body onload="renderInit()">
     <div class="container-lg">
+        <div class="alert alert-primary" role="alert">
+            &#128172; If the processing time take less than 1 millisecond then it will not be visible on the chart.
+        </div>
         <div class="mb-3">
             <select class="form-select" aria-label="Default select example" id="selectLab"
                 onchange="renderTestResults()">
-                <option value="-1" selected>Choose a lab</option>
+                <option value="-1" selected>Choose a test case...</option>
                 <option value="1">Pseudo-Random Number Generation (PRNG)</option>
                 <option value="2">Hashing (SHA-512)</option>
                 <option value="3">Encryption with symmetric key (AES-GCM)</option>
@@ -38,8 +41,8 @@
             </select>
         </div>
         <div class="d-flex align-items-center" id="divLoading">
-            <strong>Processing pending...</strong>
-            <div class="spinner-border ms-auto" role="status" aria-hidden="false"></div>
+            <strong>Processing pending, open the Javascript console to see the processing trace ...</strong>
+            <div class="spinner-border ms-auto text-primary" role="status" aria-hidden="false"></div>
         </div>
         <div class="mb-3" id="divChart">
             <canvas id="renderingTestResultsZone"></canvas>

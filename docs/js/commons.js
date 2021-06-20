@@ -103,8 +103,8 @@ function renderTestResults() {
             labels: TESTS_VALUES_LENGTH,
             datasets: [{
                 label: "Processing delay in ms (value -1 means unsupported test case)",
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 0.2)',
+                backgroundColor: 'rgba(207, 226, 255, 1)',
+                borderColor: 'rgba(207, 226, 255, 1)',
                 data: chartValues
             }]
         };
