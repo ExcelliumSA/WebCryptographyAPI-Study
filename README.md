@@ -10,13 +10,17 @@ XXX
 
 # Study note
 
-see file [study-note.pdf](study-note.pdf) to access to the full study note gathered and used for the blog post.
+> :information_source: Download the PDF file to enable the links inside the PDF.
+
+See file [study-note.pdf](study-note.pdf) to access to the full study note gathered and used for the blog post.
 
 # Lab
 
 ## Public instance
 
-The lab is automatically deployed via the [Github page feature](https://pages.github.com/) at each commit on the `main` branch on https://excelliumsa.github.io/WebCryptographyAPI-Study/
+The lab is automatically deployed via the [Github page feature](https://pages.github.com/) at each commit on the `main` branch on
+
+https://excelliumsa.github.io/WebCryptographyAPI-Study/
 
 ## Local instance
 
