@@ -3,7 +3,27 @@
  */
 
 const TESTS_VALUES_LENGTH = [10, 100, 1000, 10000, 100000, 1000000];
-var CHART_OBJECT = null;
+let CHART_OBJECT = null;
+//See https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB#libraries
+//See https://github.com/dfahlander/Dexie.js
+let INDEXEDDB_KEYS = new Dexie("cryptokeys_database");
+
+function renderInit() {
+    document.getElementById("divLoading").style.visibility = "hidden";
+    INDEXEDDB_KEYS.version(1).stores({
+        cryptokeys: "++id,cryptoKeyContent"
+    });
+}
+
+function storeKeyInDB(cryptoKeyExport) {
+    INDEXEDDB_KEYS.cryptokeys.put({
+        cryptoKeyContent: cryptoKeyExport
+    }).then(function () {
+        alert("Key content inserted into the IndexDB instance.");
+    }).catch(function (error) {
+        alert("ERROR: " + error)
+    });
+}
 
 async function executeTest(testCaseId) {
     let results = new Map();
@@ -156,11 +176,13 @@ function exportKey(mode) {
             }).catch(err => alert("ERROR: " + err));
             break;
         }
+        case "STORE-KEY": {
+            performKeyExportUsingUnprotectedWay().then(key => {
+                storeKeyInDB(key);
+            }).catch(err => alert("ERROR: " + err));
+            break;
+        }        
         default:
             alert("Unsupported mode!");
     }
-}
-
-function renderInit() {
-    document.getElementById("divLoading").style.visibility = "hidden";
 }
