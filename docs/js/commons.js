@@ -15,11 +15,11 @@ function renderInit() {
     });
 }
 
-function storeKeyInDB(cryptoKeyExport) {
+function storeKeyInDB(cryptoKey) {
     INDEXEDDB_KEYS.cryptokeys.put({
-        cryptoKeyContent: cryptoKeyExport
+        cryptoKeyContent: cryptoKey
     }).then(function () {
-        alert("Key content inserted into the IndexDB instance.");
+        alert("Key content inserted into the IndexedDB instance.");
     }).catch(function (error) {
         alert("ERROR: " + error)
     });
@@ -181,7 +181,13 @@ function exportKey(mode) {
                 storeKeyInDB(key);
             }).catch(err => alert("ERROR: " + err));
             break;
-        }        
+        }
+        case "STORE-CRYPTOKEYOBJECT": {
+            performSymmetricKeyGenerationForEncryptionDecryptionUsageWithAESGCM().then(keyObject => {
+                storeKeyInDB(keyObject);
+            }).catch(err => alert("ERROR: " + err));
+            break;
+        }
         default:
             alert("Unsupported mode!");
     }
