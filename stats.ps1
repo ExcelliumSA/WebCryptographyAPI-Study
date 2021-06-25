@@ -1,3 +1,5 @@
+# The following PowerShell script take the first page result of a search for "crypto" packages against NPM registry 
+# and try to find any reference to the Web Cryptography API in the code base of the source Git repository.
 npm search --json crypto > repo.json
 $repos = Get-Content repo.json | ConvertFrom-Json
 $patterns = @("\.subtle\.", "CryptoKey", "window\.crypto")
