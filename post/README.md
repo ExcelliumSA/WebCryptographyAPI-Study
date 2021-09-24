@@ -22,8 +22,11 @@ To obtain a PNG follow these steps:
 
 ## Mermaid code for schemas
 
-### Figure01
+### Figure12
 
 ```mermaid
-
+graph TD
+    A[Should I use the Web Cryptography API?] --> B{Who am I?}
+    B -->|JavaScript cryptographic library developer| C[Yes]
+    B -->|Other| D[No, use a JavaScript cryptographic library]
 ```
