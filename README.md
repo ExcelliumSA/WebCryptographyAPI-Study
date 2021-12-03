@@ -1,12 +1,10 @@
 # WebCryptographyAPI-Study
 
-> :construction: Work in progress
-
 Contains the materials used for the blog post about [Web Cryptography API](https://w3c.github.io/webcrypto/).
 
 # Blog post link
 
-XXX
+https://excellium-services.com/2021/12/02/what-is-web-cryptography-api/
 
 # Study note
 
